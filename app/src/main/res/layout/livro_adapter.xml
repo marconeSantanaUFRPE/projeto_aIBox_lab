@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:gravity="center|start"
+    android:orientation="horizontal">
+
+
+    <ImageView
+        android:id="@+id/fotoLivroadapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:srcCompat="@tools:sample/avatars[0]" />
+
+    <LinearLayout
+        android:layout_width="280dp"
+
+        android:layout_height="71dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/titulolivro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nome"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/qqCoisa"
+            android:layout_width="match_parent"
+            android:layout_height="29dp"
+            android:gravity="left"
+            android:text="Alguma Coisa"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/qqCoisa2"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:text="TextView"></TextView>
+
+
+    </LinearLayout>
+
+</LinearLayout>
