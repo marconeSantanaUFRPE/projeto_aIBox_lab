@@ -11,7 +11,7 @@ public class Livro implements Serializable {
     private String title;
     private String isbn;
     private int pageCount;
-    private HashMap publishedDate;
+    private String publishedDate;
     private String thumbnailUrl;
     private String shortDescription;
     private String longDescription;
@@ -43,11 +43,11 @@ public class Livro implements Serializable {
         this.pageCount = pageCount;
     }
 
-    public HashMap getPublishedDate() {
+    public String getPublishedDate() {
         return publishedDate;
     }
 
-    public void setPublishedDate(HashMap publishedDate) {
+    public void setPublishedDate(String publishedDate) {
         this.publishedDate = publishedDate;
     }
 

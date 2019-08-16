@@ -8,9 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,38 +37,22 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
 
     private RecyclerView recyclerView;
     private ArrayList<Livro> livros = new ArrayList<>();
-
-
     private String TAG = MainActivity.class.getSimpleName();
-
     private ProgressDialog pdialog;
-
-    private ListView listView;
-
 
     private  ArrayList<Livro> arrayListlivros = new ArrayList<>();
     private static String url = "https://api.myjson.com/bins/h8xi7/";
     ArrayList<HashMap<String, String>> contactList;
 
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teste);
-
         recyclerView = findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
-        listView = findViewById(R.id.lista_livros);
         contactList = new ArrayList<>();
-
-        //listView = (listView) findViewById(R.id.listview);
-
         new getLivros().execute();
-
-
 
     }
 
@@ -76,12 +62,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
         final Livro livrinho ;
         livrinho = (Livro) adapter.imprimirItem(position);
 
-        //dialog_apresentacao_livro dialog = new dialog_apresentacao_livro();
         final AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
 
         View v = getLayoutInflater().inflate(R.layout.detalhes_livro, null);
         TextView title = v.findViewById(R.id.titulo_detalhe);
         ImageView fotoLivro = v.findViewById(R.id.foto_livro);
+        ImageButton imageButton = v.findViewById(R.id.imageButtonSair);
+
+
 
         String urlDaFoto = livrinho.getThumbnailUrl();
         try {
@@ -89,9 +77,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
                 //Cuidado com a foto
                 Picasso.get().load(urlDaFoto).into(fotoLivro);
             }
-
         } catch (Exception e){
-
         }
 
         TextView autores = v.findViewById(R.id.autores);
@@ -100,37 +86,121 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
             @Override
             public void onClick(View view) {
 
-                final AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+                chamarDialog(view, livrinho, livrinho.getAuthors(),"Authors");
+            }
+        });
 
-                View v = getLayoutInflater().inflate(R.layout.autores, null);
-                ListView autores = v.findViewById(R.id.listaAutores);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(),
-                        android.R.layout.simple_list_item_1,livrinho.getAuthors());
 
-                alert.setView(v);
-                autores.setAdapter(adapter);
-                final AlertDialog dialog = alert.create();
-                dialog.show();
+        TextView categories = v.findViewById(R.id.caregoria);
+
+        categories.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chamarDialog(view,livrinho, livrinho.getCategories(),"Categories");
+            }
+        });
+
+
+        TextView isbn = v.findViewById(R.id.isbn);
+        TextView qtdPaginas = v.findViewById(R.id.qtdPaginas);
+        TextView status = v.findViewById(R.id.status);
+        TextView data = v.findViewById(R.id.dataPublicacao);
+
+        TextView descricaoLonga = v.findViewById(R.id.descricaoLonga);
+
+        descricaoLonga.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                mostrarTextos(view, livrinho, "Long description",livrinho.getLongDescription());
+
+
+            }
+        });
+
+        TextView descricaoCurta = v.findViewById(R.id.descricaoCurta);
+
+        descricaoCurta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                mostrarTextos(view,livrinho,"Short Description", livrinho.getShortDescription());
+            }
+        });
+
+        isbn.setText(livrinho.getIsbn());
+        title.setText(livrinho.getTitle());
+        String paginas = String.valueOf(livrinho.getPageCount());
+        qtdPaginas.setText(paginas);
+        status.setText(livrinho.getStatus());
+        data.setText(livrinho.getPublishedDate());
+        alert.setView(v);
+        final AlertDialog dialog = alert.create();
+        dialog.show();
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
             }
         });
 
 
 
+    }
 
+    private void mostrarTextos(View view, Livro livrinho,String string, String longaCurta) {
+        final AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
 
-
-
-        TextView isbn = v.findViewById(R.id.isbn);
-        TextView qtdPaginas = v.findViewById(R.id.qtdPaginas);
-
-
-
-
-
-        title.setText(livrinho.getTitle());
+        View v = getLayoutInflater().inflate(R.layout.dialog_texto, null);
+        TextView titulo = v.findViewById(R.id.tituloTexto);
+        titulo.setText(string);
+        TextView texto = v.findViewById(R.id.corpoTexto);
+        texto.setText(longaCurta);
+        texto.setMovementMethod(new ScrollingMovementMethod());
         alert.setView(v);
         final AlertDialog dialog = alert.create();
         dialog.show();
+
+        ImageButton imageButton = v.findViewById(R.id.imageButtonTextos);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dialog.dismiss();
+            }
+        });
+
+
+    }
+
+    private void chamarDialog(View view, Livro livrinho,ArrayList<String> stringArrayList,String t) {
+        final AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+
+        View v = getLayoutInflater().inflate(R.layout.autores, null);
+        TextView titulo = v.findViewById(R.id.TituloAutorCategoria);
+        titulo.setText(t);
+        ListView autores = v.findViewById(R.id.listaAutores);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(),
+                android.R.layout.simple_list_item_1,stringArrayList);
+
+        alert.setView(v);
+        autores.setAdapter(adapter);
+        final AlertDialog dialog = alert.create();
+        dialog.show();
+
+        ImageButton imageButton = v.findViewById(R.id.imageButtonCaregoriesAuthors);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+
+
+            }
+        });
+
+
 
     }
 
@@ -140,15 +210,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //dialog loading
             pdialog = new ProgressDialog(MainActivity.this);
-            pdialog.setMessage("Carregando");
+            pdialog.setMessage("Carregando JSON dos Livros");
             pdialog.setCancelable(false);
             pdialog.show();
-
         }
-
-
         @Override
         protected Void doInBackground(Void... voids) {
 
@@ -159,24 +225,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
 
             if (jsonStr != null) {
 
-
                 try {
 
                     JSONArray jsonObject = new JSONArray(jsonStr);
-
                     for (int i = 0; i < jsonObject.length(); i++) {
-
                         Livro livro = new Livro();
                         JSONObject livros = jsonObject.getJSONObject(i);
-
                         Iterator<String> a = livros.keys();
-
                         carregarAtributos(livro, a, livros);
-
-
                         arrayListlivros.add(livro);
-
-
                     }
 
                 } catch (final JSONException e) {
@@ -188,13 +245,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //Toast.makeText(MainActivity.this, "nao pegou o json"
-                        //      , Toast.LENGTH_SHORT).show();
-
                     }
                 });
             }
-
             return null;
 
 
@@ -208,19 +261,18 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
                 if (s.equals("title")) {
                     livro.setTitle(livros.getString(s));
                 }
-
                 if (s.equals("isbn")) {
                     livro.setIsbn(livros.getString(s));
                 }
-
                 if (s.equals("pageCount")) {
                     livro.setPageCount(livros.getInt(s));
                 }
+                if(s.equals("publishedDate")){
 
-
-                //if(s.equals("publishedDate")){
-                //  livro.setPublishedDate(s);
-                //}
+                    JSONObject jsonArray = livros.getJSONObject(s);
+                    String data = jsonArray.getString("$date");
+                    livro.setPublishedDate(data);
+                }
 
                 if (s.equals("thumbnailUrl")) {
                     livro.setThumbnailUrl(livros.getString(s));
@@ -239,52 +291,22 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
                 }
 
                 if(s.equals("authors")){
-                    JSONArray autores = livros.getJSONArray(s);
-                    ArrayList<String> autoresV = new ArrayList<>();
 
-                    for(int i = 0; i<autores.length();i++){
-
-                        String aut = (String) autores.get(i);
-                        autoresV.add(aut);
-
-
-                    }
-
-                    livro.setAuthors(autoresV);
-
-
+                    livro.setAuthors(jsonToArrayList(livro, livros, s));
                 }
 
                 if(s.equals("categories")){
 
-                    JSONArray categorias = livros.getJSONArray(s);
-                    ArrayList<String> categoriasV = new ArrayList<>();
-
-                    for(int i=0; i< categorias.length();i++){
-
-                        String cate = (String) categorias.get(i);
-                        categoriasV.add(cate);
-                    }
-
-                    livro.setCategories(categoriasV);
-
-
+                    livro.setCategories(jsonToArrayList(livro,livros,s));
                 }
-
-
             }
         }
 
         @Override
         protected void onPostExecute(Void avoid) {
             super.onPostExecute(avoid);
-
-            //desativer dialog
-
             if (pdialog.isShowing()) {
-
                 pdialog.dismiss();
-
 
             }
 
@@ -310,11 +332,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
                             adapter.addListItem(arrayAux.get(i), arrayListlivros.size());
                         }
 
-
                     }
-
                 }
-
             });
 
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
@@ -330,4 +349,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnCli
         }
     }
 
+    private ArrayList<String> jsonToArrayList(Livro livro, JSONObject livros, String s) throws JSONException {
+        JSONArray autores = livros.getJSONArray(s);
+        ArrayList<String> autoresV = new ArrayList<>();
+
+        for(int i = 0; i<autores.length();i++){
+
+            String aut = (String) autores.get(i);
+            autoresV.add(aut);
+        }
+        return autoresV;
+    }
 }
