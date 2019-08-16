@@ -1,10 +1,11 @@
 package com.example.projeto_aibox_lab.Entidades;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Livro {
+public class Livro implements Serializable {
 
 
     private String title;

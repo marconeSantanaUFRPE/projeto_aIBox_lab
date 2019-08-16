@@ -1,4 +1,4 @@
-package com.example.projeto_aibox_lab.GUI;
+package com.example.projeto_aibox_lab.GUI.adapter;
 
 import android.app.Activity;
 import android.util.Log;

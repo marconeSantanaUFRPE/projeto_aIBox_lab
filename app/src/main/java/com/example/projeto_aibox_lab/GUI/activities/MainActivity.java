@@ -1,21 +1,18 @@
-package com.example.projeto_aibox_lab.GUI;
+package com.example.projeto_aibox_lab.GUI.activities;
 
-import android.app.ListActivity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.projeto_aibox_lab.Entidades.Livro;
+import com.example.projeto_aibox_lab.GUI.adapter.adapterLivros;
 import com.example.projeto_aibox_lab.Negocio.baixar_json;
 import com.example.projeto_aibox_lab.R;
 
@@ -23,7 +20,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,7 +28,10 @@ public class MainActivity extends AppCompatActivity  {
     private String TAG = MainActivity.class.getSimpleName();
 
     private ProgressDialog pdialog;
+
     private ListView listView;
+
+
     private  ArrayList<Livro> arrayListlivros = new ArrayList<>();
     private static String url = "https://api.myjson.com/bins/h8xi7/";
     ArrayList<HashMap<String, String>> contactList;
@@ -90,33 +89,6 @@ public class MainActivity extends AppCompatActivity  {
 
                         carregarAtributos(livro, a, livros);
 
-//                        String title = livros.getString("title");
-//                        String isbn = livros.getString("isbn");
-//                        int pageCount = livros.getInt("pageCount");
-//
-//                        //hashmap
-//                        String publishedDate = (livros.getString("publishedDate"));
-//
-//                        String thumbnailUrl = livros.getString("thumbnailUrl");
-//                        String shortDescription = livros.getString("shortDescription");
-//                        String longDescription = livros.getString("longDescription");
-//                        String status = livros.getString("status");
-//
-//                        //arraylist
-//                        String authors = livros.getString("authors");
-//
-//                        //arraylist
-//                        String caregories =  livros.getString("categories");
-//
-//
-//                        livro.setTitle(title);
-//                        livro.setIsbn(isbn);
-//                        livro.setPageCount(pageCount);
-//                        livro.setThumbnailUrl(thumbnailUrl);
-//                        livro.setLongDescription(longDescription);
-//                        livro.setShortDescription(shortDescription);
-//                        livro.setStatus(status);
-//
 
                         arrayListlivros.add(livro);
 
@@ -125,8 +97,6 @@ public class MainActivity extends AppCompatActivity  {
 
                 } catch (final JSONException e){
                     Log.e(TAG, "Response parsing error: " + e.getMessage() );
-
-
                 }
             }
             else{
@@ -138,16 +108,11 @@ public class MainActivity extends AppCompatActivity  {
                         //Toast.makeText(MainActivity.this, "nao pegou o json"
                           //      , Toast.LENGTH_SHORT).show();
 
-
                     }
                 });
                 }
 
-
-
             return null;
-
-
 
 
         }
@@ -226,8 +191,21 @@ public class MainActivity extends AppCompatActivity  {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                   // Livro livrinho ;
-                    //livrinho = (Livro)
+                   Livro livrinho ;
+                   livrinho = (Livro) adapterView.getAdapter().getItem(i);
+
+
+                   //dialog_apresentacao_livro dialog = new dialog_apresentacao_livro();
+                    final AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+
+                    View v = getLayoutInflater().inflate(R.layout.detalhes_livro, null);
+                    TextView title = v.findViewById(R.id.titulo_detalhe);
+                    title.setText(livrinho.getTitle());
+                    alert.setView(v);
+                    final AlertDialog dialog = alert.create();
+                    dialog.show();
+
+
 
                 }
             });
